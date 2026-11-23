@@ -1,0 +1,100 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduData Insight | Dashboard Educativo</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f3f6fc;color:#263449}
+header{background:#123b70;color:white;padding:25px 5%;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}
+header h1{font-size:25px}
+header p{font-size:13px;color:#cbdcf4;margin-top:7px}
+.status{background:#245b91;padding:9px 14px;border-radius:20px;font-size:12px}
+main{max-width:1250px;margin:28px auto;padding:0 20px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin-bottom:22px}
+.top h2{font-size:21px}
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+select{padding:11px;border:1px solid #d7e0ec;border-radius:8px;background:white;color:#34445b}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:15px;margin-bottom:22px}
+.card,.panel{background:white;border:1px solid #e5eaf2;border-radius:13px;padding:20px;box-shadow:0 3px 12px #183b7010}
+.card p{font-size:13px;color:#718096;margin-bottom:13px}
+.card h3{font-size:25px;color:#174b83}
+.card small{color:#94a3b8;font-size:11px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.panel h3{font-size:16px;margin-bottom:8px}
+.panel p{font-size:12px;color:#8794a6;margin-bottom:18px}
+.chart{height:260px;position:relative}
+.empty{height:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:#8997a9;font-size:13px;background:#f8fafc;border-radius:9px;padding:20px}
+footer{text-align:center;padding:25px;color:#8794a6;font-size:12px}
+@media(max-width:950px){.cards{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:650px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}header h1{font-size:21px}}
+</style>
+</head>
+<body>
+<header>
+ <div>
+  <h1>EduData Insight</h1>
+  <p>Sistema de monitoreo de matrícula y trayectoria educativa en el Perú</p>
+ </div>
+ <span class="status">● Panel de análisis educativo</span>
+</header>
+
+<main>
+ <section class="top">
+  <div>
+   <h2>Panel de control</h2>
+   <p style="color:#8794a6;font-size:12px;margin-top:6px">Información educativa · MINEDU</p>
+  </div>
+  <div class="filters">
+   <select id="year">
+    <option value="">Todos los años</option>
+    <option>2021</option><option>2022</option>
+    <option>2023</option><option>2024</option>
+   </select>
+   <select id="level">
+    <option value="">Todos los niveles</option>
+    <option>Primaria</option><option>Secundaria</option>
+   </select>
+  </div>
+ </section>
+
+ <section class="cards">
+  <div class="card"><p>Total de matrícula</p><h3>—</h3><small>Pendiente de conexión</small></div>
+  <div class="card"><p>Estudiantes hombres</p><h3>—</h3><small>Pendiente de conexión</small></div>
+  <div class="card"><p>Estudiantes mujeres</p><h3>—</h3><small>Pendiente de conexión</small></div>
+  <div class="card"><p>Estudiantes aprobados</p><h3>—</h3><small>Pendiente de conexión</small></div>
+  <div class="card"><p>Total de desertores</p><h3>—</h3><small>Pendiente de conexión</small></div>
+ </section>
+
+ <section class="grid">
+  <div class="panel">
+   <h3>Matrícula por año</h3>
+   <p>Evolución de la matrícula educativa (2021–2024)</p>
+   <div class="empty">Los datos aparecerán al conectar la base educativa.</div>
+  </div>
+  <div class="panel">
+   <h3>Matrícula por departamento</h3>
+   <p>Distribución territorial de estudiantes</p>
+   <div class="empty">Visualización pendiente de datos reales.</div>
+  </div>
+  <div class="panel">
+   <h3>Distribución por sexo</h3>
+   <p>Comparación de hombres y mujeres</p>
+   <div class="empty">Visualización pendiente de datos reales.</div>
+  </div>
+  <div class="panel">
+   <h3>Deserción por nivel educativo</h3>
+   <p>Comparación entre primaria y secundaria</p>
+   <div class="empty">Visualización pendiente de datos reales.</div>
+  </div>
+ </section>
+</main>
+
+<footer>
+ EduData Insight · Proyecto de análisis de datos educativos del Perú · 2026
+</footer>
+</body>
+</html>
