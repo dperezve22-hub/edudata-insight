@@ -3,9 +3,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EduData Insight | Dashboard Educativo</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f1f5fb;color:#24344d}
@@ -17,6 +18,7 @@ main{max-width:1350px;margin:30px auto;padding:0 22px}
 .top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;margin-bottom:22px}
 .top h2{font-size:22px}
 .top p{color:#8190a5;font-size:12px;margin-top:7px}
+.filters{display:flex;gap:10px;flex-wrap:wrap}
 select{padding:11px;border:1px solid #dce4ef;border-radius:8px;background:white;color:#34445b}
 .cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
 .card,.panel{background:white;border:1px solid #e4eaf2;border-radius:13px;padding:19px;box-shadow:0 3px 12px #183b7010}
@@ -27,13 +29,15 @@ select{padding:11px;border:1px solid #dce4ef;border-radius:8px;background:white;
 .panel h3{font-size:16px;margin-bottom:8px}
 .panel p{font-size:12px;color:#8794a6;margin-bottom:16px}
 .chart{height:290px;position:relative}
+.note{background:#eaf2fc;padding:13px;border-radius:9px;color:#45617f;font-size:12px;margin-bottom:20px;line-height:1.6}
 footer{text-align:center;color:#8794a6;padding:25px;font-size:12px}
-.note{background:#eaf2fc;padding:13px;border-radius:9px;color:#45617f;font-size:12px;margin-bottom:20px}
 @media(max-width:1000px){.cards{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:650px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+@media(max-width:650px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}header h1{font-size:21px}}
 </style>
 </head>
+
 <body>
+
 <header>
  <div>
   <h1>EduData Insight</h1>
@@ -43,61 +47,98 @@ footer{text-align:center;color:#8794a6;padding:25px;font-size:12px}
 </header>
 
 <main>
- <section class="top">
-  <div>
-   <h2>Panel de control</h2>
-   <p>Información educativa · Periodo 2021–2024</p>
-  </div>
-  <div>
-   <select id="year">
-    <option value="all">Todos los años</option>
-    <option value="2021">2021</option>
-    <option value="2022">2022</option>
-    <option value="2023">2023</option>
-    <option value="2024">2024</option>
-   </select>
-   <select id="level">
-    <option value="all">Todos los niveles</option>
-    <option value="Primaria">Primaria</option>
-    <option value="Secundaria">Secundaria</option>
-   </select>
-  </div>
- </section>
 
- <div class="note">
-  Datos obtenidos de las consultas SQL de EduData Insight. Los indicadores representan el total del periodo y no cambian con los filtros.
+<section class="top">
+ <div>
+  <h2>Panel de control</h2>
+  <p>Información educativa · Periodo 2021–2024</p>
+ </div>
+ <div class="filters">
+  <select id="year">
+   <option value="all">Todos los años</option>
+   <option value="2021">2021</option>
+   <option value="2022">2022</option>
+   <option value="2023">2023</option>
+   <option value="2024">2024</option>
+  </select>
+
+  <select id="level">
+   <option value="all">Todos los niveles</option>
+   <option value="Primaria">Primaria</option>
+   <option value="Secundaria">Secundaria</option>
+  </select>
+ </div>
+</section>
+
+<div class="note">
+ Datos obtenidos de las consultas SQL de EduData Insight.
+ Los indicadores de trayectoria cambian según el año seleccionado.
+ La información de deserción corresponde a los registros disponibles
+ de primaria y secundaria, sin desagregación temporal.
+</div>
+
+<section class="cards">
+
+ <div class="card">
+  <p>Total de matrícula</p>
+  <h3 id="totalMatricula">30,178,696</h3>
+  <small id="periodMatricula">Periodo 2021–2024</small>
  </div>
 
- <section class="cards">
-  <div class="card"><p>Total de matrícula</p><h3>30,178,696</h3><small>Periodo 2021–2024</small></div>
-  <div class="card"><p>Estudiantes hombres</p><h3>15,352,274</h3><small>Registros acumulados</small></div>
-  <div class="card"><p>Estudiantes mujeres</p><h3>14,826,422</h3><small>Registros acumulados</small></div>
-  <div class="card"><p>Estudiantes aprobados</p><h3>28,862,881</h3><small>Registros acumulados</small></div>
-  <div class="card"><p>Total de desertores</p><h3>136,745</h3><small>Primaria y secundaria</small></div>
- </section>
+ <div class="card">
+  <p>Estudiantes hombres</p>
+  <h3 id="totalHombres">15,352,274</h3>
+  <small>Registros de trayectoria</small>
+ </div>
 
- <section class="grid">
-  <div class="panel">
-   <h3>Matrícula por año</h3>
-   <p>Evolución de la matrícula educativa</p>
-   <div class="chart"><canvas id="yearChart"></canvas></div>
-  </div>
-  <div class="panel">
-   <h3>Matrícula por departamento</h3>
-   <p>Diez departamentos con mayor matrícula</p>
-   <div class="chart"><canvas id="departmentChart"></canvas></div>
-  </div>
-  <div class="panel">
-   <h3>Distribución por sexo</h3>
-   <p>Comparación de hombres y mujeres</p>
-   <div class="chart"><canvas id="genderChart"></canvas></div>
-  </div>
-  <div class="panel">
-   <h3>Deserción por nivel educativo</h3>
-   <p>Comparación entre primaria y secundaria</p>
-   <div class="chart"><canvas id="dropoutChart"></canvas></div>
-  </div>
- </section>
+ <div class="card">
+  <p>Estudiantes mujeres</p>
+  <h3 id="totalMujeres">14,826,422</h3>
+  <small>Registros de trayectoria</small>
+ </div>
+
+ <div class="card">
+  <p>Estudiantes aprobados</p>
+  <h3 id="totalAprobados">28,862,881</h3>
+  <small>Registros de trayectoria</small>
+ </div>
+
+ <div class="card">
+  <p>Total de desertores</p>
+  <h3 id="totalDesertores">136,745</h3>
+  <small>Primaria y secundaria</small>
+ </div>
+
+</section>
+
+<section class="grid">
+
+ <div class="panel">
+  <h3>Matrícula por año</h3>
+  <p>Evolución de la matrícula educativa</p>
+  <div class="chart"><canvas id="yearChart"></canvas></div>
+ </div>
+
+ <div class="panel">
+  <h3>Matrícula por departamento</h3>
+  <p>Diez departamentos con mayor matrícula</p>
+  <div class="chart"><canvas id="departmentChart"></canvas></div>
+ </div>
+
+ <div class="panel">
+  <h3>Distribución por sexo</h3>
+  <p>Comparación de hombres y mujeres</p>
+  <div class="chart"><canvas id="genderChart"></canvas></div>
+ </div>
+
+ <div class="panel">
+  <h3>Deserción por nivel educativo</h3>
+  <p>Comparación entre primaria y secundaria</p>
+  <div class="chart"><canvas id="dropoutChart"></canvas></div>
+ </div>
+
+</section>
+
 </main>
 
 <footer>
@@ -105,11 +146,34 @@ footer{text-align:center;color:#8794a6;padding:25px;font-size:12px}
 </footer>
 
 <script>
-const years = {
- "2021":7488219,
- "2022":7593733,
- "2023":7585961,
- "2024":7510783
+
+// DATOS REALES OBTENIDOS DE SQL SERVER
+
+const yearlyData = {
+ "2021":{
+  matricula:7488219,
+  hombres:3808542,
+  mujeres:3679677,
+  aprobados:7064915
+ },
+ "2022":{
+  matricula:7593733,
+  hombres:3863817,
+  mujeres:3729916,
+  aprobados:7323283
+ },
+ "2023":{
+  matricula:7585961,
+  hombres:3860194,
+  mujeres:3725767,
+  aprobados:7278973
+ },
+ "2024":{
+  matricula:7510783,
+  hombres:3819721,
+  mujeres:3691062,
+  aprobados:7195710
+ }
 };
 
 const departments = {
@@ -135,76 +199,221 @@ const dropout = {
  "Secundaria":72282
 };
 
-const fmt = n => n.toLocaleString("es-PE");
+const formatNumber = n => n.toLocaleString("es-PE");
 
-let yearChart, departmentChart, genderChart, dropoutChart;
+let yearChart;
+let departmentChart;
+let genderChart;
+let dropoutChart;
+
+// CREACIÓN DE LOS GRÁFICOS
 
 function createCharts(){
+
  const common = {
   responsive:true,
-  maintainAspectRatio:false,
-  plugins:{legend:{display:false}}
+  maintainAspectRatio:false
  };
 
- yearChart = new Chart(document.getElementById("yearChart"),{
-  type:"bar",
-  data:{
-   labels:Object.keys(years),
-   datasets:[{label:"Matrícula",data:Object.values(years),backgroundColor:"#347fbd",borderRadius:6}]
-  },
-  options:{...common,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.raw)}}},scales:{y:{ticks:{callback:v=>(v/1000000).toFixed(1)+" M"}}}}
- });
+ yearChart = new Chart(
+  document.getElementById("yearChart"),
+  {
+   type:"bar",
+   data:{
+    labels:Object.keys(yearlyData),
+    datasets:[{
+     label:"Matrícula",
+     data:Object.values(yearlyData).map(x=>x.matricula),
+     backgroundColor:"#347fbd",
+     borderRadius:6
+    }]
+   },
+   options:{
+    ...common,
+    plugins:{
+     legend:{display:false},
+     tooltip:{
+      callbacks:{
+       label:c=>formatNumber(c.raw)
+      }
+     }
+    }
+   }
+  }
+ );
 
- departmentChart = new Chart(document.getElementById("departmentChart"),{
-  type:"bar",
-  data:{
-   labels:Object.keys(departments),
-   datasets:[{data:Object.values(departments),backgroundColor:"#4a9b91",borderRadius:5}]
-  },
-  options:{...common,indexAxis:"y",plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.raw)}}},scales:{x:{ticks:{callback:v=>(v/1000000).toFixed(1)+" M"}}}}
- });
+ departmentChart = new Chart(
+  document.getElementById("departmentChart"),
+  {
+   type:"bar",
+   data:{
+    labels:Object.keys(departments),
+    datasets:[{
+     label:"Matrícula",
+     data:Object.values(departments),
+     backgroundColor:"#4a9b91",
+     borderRadius:5
+    }]
+   },
+   options:{
+    ...common,
+    indexAxis:"y",
+    plugins:{
+     legend:{display:false},
+     tooltip:{
+      callbacks:{
+       label:c=>formatNumber(c.raw)
+      }
+     }
+    }
+   }
+  }
+ );
 
- genderChart = new Chart(document.getElementById("genderChart"),{
-  type:"doughnut",
-  data:{
-   labels:Object.keys(gender),
-   datasets:[{data:Object.values(gender),backgroundColor:["#3979bb","#e58ba9"],borderWidth:2}]
-  },
-  options:{...common,plugins:{legend:{display:true,position:"bottom"},tooltip:{callbacks:{label:c=>c.label+": "+fmt(c.raw)}}}}
- });
+ genderChart = new Chart(
+  document.getElementById("genderChart"),
+  {
+   type:"doughnut",
+   data:{
+    labels:Object.keys(gender),
+    datasets:[{
+     data:Object.values(gender),
+     backgroundColor:["#3979bb","#e58ba9"],
+     borderWidth:2
+    }]
+   },
+   options:{
+    ...common,
+    plugins:{
+     legend:{display:true,position:"bottom"},
+     tooltip:{
+      callbacks:{
+       label:c=>c.label+": "+formatNumber(c.raw)
+      }
+     }
+    }
+   }
+  }
+ );
 
- dropoutChart = new Chart(document.getElementById("dropoutChart"),{
-  type:"bar",
-  data:{
-   labels:Object.keys(dropout),
-   datasets:[{data:Object.values(dropout),backgroundColor:["#e4a14b","#d76c70"],borderRadius:6}]
-  },
-  options:{...common,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>fmt(c.raw)}}},scales:{y:{ticks:{callback:v=>fmt(v)}}}}
- });
+ dropoutChart = new Chart(
+  document.getElementById("dropoutChart"),
+  {
+   type:"bar",
+   data:{
+    labels:Object.keys(dropout),
+    datasets:[{
+     label:"Desertores",
+     data:Object.values(dropout),
+     backgroundColor:["#e4a14b","#d76c70"],
+     borderRadius:6
+    }]
+   },
+   options:{
+    ...common,
+    plugins:{
+     legend:{display:false},
+     tooltip:{
+      callbacks:{
+       label:c=>formatNumber(c.raw)
+      }
+     }
+    }
+   }
+  }
+ );
+
 }
 
-function applyFilters(){
- const year = document.getElementById("year").value;
- const level = document.getElementById("level").value;
+// ACTUALIZAR LOS INDICADORES Y GRÁFICOS
+
+function updateDashboard(){
+
+ const selectedYear =
+  document.getElementById("year").value;
+
+ const selectedLevel =
+  document.getElementById("level").value;
+
+ let data;
+
+ if(selectedYear==="all"){
+
+  data=Object.values(yearlyData).reduce(
+   (acc,x)=>({
+    matricula:acc.matricula+x.matricula,
+    hombres:acc.hombres+x.hombres,
+    mujeres:acc.mujeres+x.mujeres,
+    aprobados:acc.aprobados+x.aprobados
+   }),
+   {matricula:0,hombres:0,mujeres:0,aprobados:0}
+  );
+
+  document.getElementById("periodMatricula").textContent =
+   "Periodo 2021–2024";
+
+ }else{
+
+  data=yearlyData[selectedYear];
+
+  document.getElementById("periodMatricula").textContent =
+   "Año "+selectedYear;
+
+ }
+
+ document.getElementById("totalMatricula").textContent =
+  formatNumber(data.matricula);
+
+ document.getElementById("totalHombres").textContent =
+  formatNumber(data.hombres);
+
+ document.getElementById("totalMujeres").textContent =
+  formatNumber(data.mujeres);
+
+ document.getElementById("totalAprobados").textContent =
+  formatNumber(data.aprobados);
+
+ // ACTUALIZAR MATRÍCULA POR AÑO
+
+ const years = selectedYear==="all"
+  ? Object.keys(yearlyData)
+  : [selectedYear];
+
+ yearChart.data.labels=years;
 
  yearChart.data.datasets[0].data =
-  year==="all" ? Object.values(years) : [years[year]];
- yearChart.data.labels =
-  year==="all" ? Object.keys(years) : [year];
+  years.map(y=>yearlyData[y].matricula);
+
  yearChart.update();
 
- dropoutChart.data.labels =
-  level==="all" ? Object.keys(dropout) : [level];
+ // ACTUALIZAR DESERCIÓN POR NIVEL
+
+ const levels = selectedLevel==="all"
+  ? Object.keys(dropout)
+  : [selectedLevel];
+
+ dropoutChart.data.labels=levels;
+
  dropoutChart.data.datasets[0].data =
-  level==="all" ? Object.values(dropout) : [dropout[level]];
+  levels.map(x=>dropout[x]);
+
  dropoutChart.update();
+
 }
 
-document.getElementById("year").addEventListener("change",applyFilters);
-document.getElementById("level").addEventListener("change",applyFilters);
+// INICIAR DASHBOARD
 
 createCharts();
+
+document.getElementById("year")
+ .addEventListener("change",updateDashboard);
+
+document.getElementById("level")
+ .addEventListener("change",updateDashboard);
+
+updateDashboard();
+
 </script>
+
 </body>
 </html>
-
