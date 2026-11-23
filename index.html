@@ -416,14 +416,13 @@ function updateDashboard(){
 
  yearChart.update();
 
- // ACTUALIZAR GRÁFICO POR SEXO
+// ACTUALIZAR DISTRIBUCIÓN POR SEXO
+genderChart.data.datasets[0].data = [
+    data.hombres,
+    data.mujeres
+];
 
- genderChart.data.datasets[0].data = [
-  data.hombres,
-  data.mujeres
- ];
-
- genderChart.update();
+genderChart.update();
 
  // ACTUALIZAR DESERCIÓN POR NIVEL
 
