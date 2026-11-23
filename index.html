@@ -32,7 +32,11 @@ select{padding:11px;border:1px solid #dce4ef;border-radius:8px;background:white;
 .note{background:#eaf2fc;padding:13px;border-radius:9px;color:#45617f;font-size:12px;margin-bottom:20px;line-height:1.6}
 footer{text-align:center;color:#8794a6;padding:25px;font-size:12px}
 @media(max-width:1000px){.cards{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:650px){.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}header h1{font-size:21px}}
+@media(max-width:650px){
+ .cards{grid-template-columns:repeat(2,1fr)}
+ .grid{grid-template-columns:1fr}
+ header h1{font-size:21px}
+}
 </style>
 </head>
 
@@ -53,6 +57,7 @@ footer{text-align:center;color:#8794a6;padding:25px;font-size:12px}
   <h2>Panel de control</h2>
   <p>Información educativa · Periodo 2021–2024</p>
  </div>
+
  <div class="filters">
   <select id="year">
    <option value="all">Todos los años</option>
@@ -70,43 +75,42 @@ footer{text-align:center;color:#8794a6;padding:25px;font-size:12px}
  </div>
 </section>
 
-<div class="note">
- Datos obtenidos de las consultas SQL de EduData Insight.
- Los indicadores de trayectoria cambian según el año seleccionado.
- La información de deserción corresponde a los registros disponibles
- de primaria y secundaria, sin desagregación temporal.
+<div class="note" id="dataNote">
+ Los indicadores de matrícula corresponden a las consultas SQL del periodo
+ 2021–2024. La deserción se presenta por nivel educativo porque la fuente
+ disponible no contiene desagregación por año.
 </div>
 
 <section class="cards">
 
  <div class="card">
   <p>Total de matrícula</p>
-  <h3 id="totalMatricula">30,178,696</h3>
+  <h3 id="totalMatricula">0</h3>
   <small id="periodMatricula">Periodo 2021–2024</small>
  </div>
 
  <div class="card">
   <p>Estudiantes hombres</p>
-  <h3 id="totalHombres">15,352,274</h3>
-  <small>Registros de trayectoria</small>
+  <h3 id="totalHombres">0</h3>
+  <small>Según año seleccionado</small>
  </div>
 
  <div class="card">
   <p>Estudiantes mujeres</p>
-  <h3 id="totalMujeres">14,826,422</h3>
-  <small>Registros de trayectoria</small>
+  <h3 id="totalMujeres">0</h3>
+  <small>Según año seleccionado</small>
  </div>
 
  <div class="card">
   <p>Estudiantes aprobados</p>
-  <h3 id="totalAprobados">28,862,881</h3>
-  <small>Registros de trayectoria</small>
+  <h3 id="totalAprobados">0</h3>
+  <small>Según año seleccionado</small>
  </div>
 
  <div class="card">
   <p>Total de desertores</p>
-  <h3 id="totalDesertores">136,745</h3>
-  <small>Primaria y secundaria</small>
+  <h3 id="totalDesertores">0</h3>
+  <small id="periodDesertores">Primaria y secundaria</small>
  </div>
 
 </section>
@@ -115,25 +119,25 @@ footer{text-align:center;color:#8794a6;padding:25px;font-size:12px}
 
  <div class="panel">
   <h3>Matrícula por año</h3>
-  <p>Evolución de la matrícula educativa</p>
+  <p>Evolución de la matrícula educativa (2021–2024)</p>
   <div class="chart"><canvas id="yearChart"></canvas></div>
  </div>
 
  <div class="panel">
   <h3>Matrícula por departamento</h3>
-  <p>Diez departamentos con mayor matrícula</p>
+  <p>Diez departamentos con mayor matrícula · Acumulado disponible</p>
   <div class="chart"><canvas id="departmentChart"></canvas></div>
  </div>
 
  <div class="panel">
   <h3>Distribución por sexo</h3>
-  <p>Comparación de hombres y mujeres</p>
+  <p>Comparación de hombres y mujeres según el año seleccionado</p>
   <div class="chart"><canvas id="genderChart"></canvas></div>
  </div>
 
  <div class="panel">
   <h3>Deserción por nivel educativo</h3>
-  <p>Comparación entre primaria y secundaria</p>
+  <p>Registros disponibles de primaria y secundaria</p>
   <div class="chart"><canvas id="dropoutChart"></canvas></div>
  </div>
 
@@ -147,7 +151,7 @@ footer{text-align:center;color:#8794a6;padding:25px;font-size:12px}
 
 <script>
 
-// DATOS REALES OBTENIDOS DE SQL SERVER
+// DATOS DE TRAYECTORIA OBTENIDOS DE SQL SERVER
 
 const yearlyData = {
  "2021":{
@@ -176,6 +180,8 @@ const yearlyData = {
  }
 };
 
+// MATRÍCULA POR DEPARTAMENTO: ACUMULADO DISPONIBLE
+
 const departments = {
  "Lima":9134480,
  "Piura":2313758,
@@ -189,24 +195,22 @@ const departments = {
  "Puno":1059352
 };
 
-const gender = {
- "Hombres":15352274,
- "Mujeres":14826422
-};
+// DESERCIÓN: NO TIENE DESAGREGACIÓN POR AÑO
 
 const dropout = {
  "Primaria":64463,
  "Secundaria":72282
 };
 
-const formatNumber = n => n.toLocaleString("es-PE");
+const formatNumber = n =>
+ Number(n).toLocaleString("es-PE");
 
 let yearChart;
 let departmentChart;
 let genderChart;
 let dropoutChart;
 
-// CREACIÓN DE LOS GRÁFICOS
+// CREAR GRÁFICOS
 
 function createCharts(){
 
@@ -214,6 +218,8 @@ function createCharts(){
   responsive:true,
   maintainAspectRatio:false
  };
+
+ // MATRÍCULA POR AÑO
 
  yearChart = new Chart(
   document.getElementById("yearChart"),
@@ -224,7 +230,7 @@ function createCharts(){
     datasets:[{
      label:"Matrícula",
      data:Object.values(yearlyData).map(x=>x.matricula),
-     backgroundColor:"#347fbd",
+     backgroundColor:["#347fbd","#347fbd","#347fbd","#347fbd"],
      borderRadius:6
     }]
    },
@@ -234,13 +240,23 @@ function createCharts(){
      legend:{display:false},
      tooltip:{
       callbacks:{
-       label:c=>formatNumber(c.raw)
+       label:c=>"Matrícula: "+formatNumber(c.raw)
+      }
+     }
+    },
+    scales:{
+     y:{
+      beginAtZero:true,
+      ticks:{
+       callback:value=>(value/1000000).toFixed(1)+" M"
       }
      }
     }
    }
   }
  );
+
+ // MATRÍCULA POR DEPARTAMENTO
 
  departmentChart = new Chart(
   document.getElementById("departmentChart"),
@@ -249,7 +265,7 @@ function createCharts(){
    data:{
     labels:Object.keys(departments),
     datasets:[{
-     label:"Matrícula",
+     label:"Matrícula acumulada",
      data:Object.values(departments),
      backgroundColor:"#4a9b91",
      borderRadius:5
@@ -265,19 +281,29 @@ function createCharts(){
        label:c=>formatNumber(c.raw)
       }
      }
+    },
+    scales:{
+     x:{
+      beginAtZero:true,
+      ticks:{
+       callback:value=>(value/1000000).toFixed(1)+" M"
+      }
+     }
     }
    }
   }
  );
+
+ // DISTRIBUCIÓN POR SEXO
 
  genderChart = new Chart(
   document.getElementById("genderChart"),
   {
    type:"doughnut",
    data:{
-    labels:Object.keys(gender),
+    labels:["Hombres","Mujeres"],
     datasets:[{
-     data:Object.values(gender),
+     data:[0,0],
      backgroundColor:["#3979bb","#e58ba9"],
      borderWidth:2
     }]
@@ -296,15 +322,17 @@ function createCharts(){
   }
  );
 
+ // DESERCIÓN POR NIVEL
+
  dropoutChart = new Chart(
   document.getElementById("dropoutChart"),
   {
    type:"bar",
    data:{
-    labels:Object.keys(dropout),
+    labels:["Primaria","Secundaria"],
     datasets:[{
      label:"Desertores",
-     data:Object.values(dropout),
+     data:[dropout.Primaria,dropout.Secundaria],
      backgroundColor:["#e4a14b","#d76c70"],
      borderRadius:6
     }]
@@ -315,7 +343,7 @@ function createCharts(){
      legend:{display:false},
      tooltip:{
       callbacks:{
-       label:c=>formatNumber(c.raw)
+       label:c=>"Desertores: "+formatNumber(c.raw)
       }
      }
     }
@@ -325,7 +353,7 @@ function createCharts(){
 
 }
 
-// ACTUALIZAR LOS INDICADORES Y GRÁFICOS
+// ACTUALIZAR TODO EL DASHBOARD
 
 function updateDashboard(){
 
@@ -334,6 +362,8 @@ function updateDashboard(){
 
  const selectedLevel =
   document.getElementById("level").value;
+
+ // OBTENER DATOS SEGÚN EL AÑO
 
  let data;
 
@@ -361,6 +391,8 @@ function updateDashboard(){
 
  }
 
+ // ACTUALIZAR TARJETAS DE TRAYECTORIA
+
  document.getElementById("totalMatricula").textContent =
   formatNumber(data.matricula);
 
@@ -373,31 +405,65 @@ function updateDashboard(){
  document.getElementById("totalAprobados").textContent =
   formatNumber(data.aprobados);
 
- // ACTUALIZAR MATRÍCULA POR AÑO
+ // ACTUALIZAR GRÁFICO POR AÑO: RESALTAR SELECCIÓN
 
- const years = selectedYear==="all"
-  ? Object.keys(yearlyData)
-  : [selectedYear];
-
- yearChart.data.labels=years;
-
- yearChart.data.datasets[0].data =
-  years.map(y=>yearlyData[y].matricula);
+ yearChart.data.datasets[0].backgroundColor =
+  Object.keys(yearlyData).map(year=>
+   selectedYear==="all" || selectedYear===year
+    ? "#347fbd"
+    : "#cbd9e8"
+  );
 
  yearChart.update();
 
+ // ACTUALIZAR GRÁFICO POR SEXO
+
+ genderChart.data.datasets[0].data = [
+  data.hombres,
+  data.mujeres
+ ];
+
+ genderChart.update();
+
  // ACTUALIZAR DESERCIÓN POR NIVEL
 
- const levels = selectedLevel==="all"
-  ? Object.keys(dropout)
-  : [selectedLevel];
+ let selectedDropout;
 
- dropoutChart.data.labels=levels;
+ if(selectedLevel==="all"){
 
- dropoutChart.data.datasets[0].data =
-  levels.map(x=>dropout[x]);
+  selectedDropout=dropout;
 
+ }else{
+
+  selectedDropout={
+   [selectedLevel]:dropout[selectedLevel]
+  };
+
+ }
+
+ const dropoutLabels=Object.keys(selectedDropout);
+ const dropoutValues=Object.values(selectedDropout);
+
+ document.getElementById("totalDesertores").textContent =
+  formatNumber(dropoutValues.reduce((a,b)=>a+b,0));
+
+ document.getElementById("periodDesertores").textContent =
+  selectedLevel==="all"
+   ? "Primaria y secundaria"
+   : "Nivel: "+selectedLevel;
+
+ dropoutChart.data.labels=dropoutLabels;
+ dropoutChart.data.datasets[0].data=dropoutValues;
  dropoutChart.update();
+
+ // ACLARACIÓN DE LOS FILTROS
+
+ document.getElementById("dataNote").textContent =
+  "Matrícula y trayectoria: "+
+  (selectedYear==="all" ? "acumulado 2021–2024" : "año "+selectedYear)+
+  ". Deserción: "+
+  (selectedLevel==="all" ? "primaria y secundaria" : selectedLevel)+
+  ". Los datos de deserción y matrícula por departamento no cuentan con desagregación temporal disponible.";
 
 }
 
